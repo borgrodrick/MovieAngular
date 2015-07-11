@@ -14,13 +14,56 @@ namespace MovieAngular.Models
     public class SampleData
     {
 
+        public static async Task CreateSampleData(IServiceProvider applicationServices)
+        {
+            using (var dbContext = applicationServices.GetService<MoviesAppContext>())
+            {
+                var sqlServerDatabase = dbContext.Database as SqlServerDatabase;
+                if (sqlServerDatabase != null)
+                {
+                    // Create database in user root (c:\users\your name)
+                    if (await sqlServerDatabase.EnsureCreatedAsync())
+                    {
+                        // add some movies
+                        var movies = new List<Movie>
+                {
+                    new Movie {Title="Star Wars", Director="Lucas"},
+                    new Movie {Title="King Kong", Director="Jackson"},
+                    new Movie {Title="Memento", Director="Nolan"}
+                };
+                        movies.ForEach(m => dbContext.Movies.Add(m));
+
+                        // add some users
+                        var userManager = applicationServices.GetService<UserManager<ApplicationUser>>();
+
+                        // add editor user
+                        var stephen = new ApplicationUser
+                        {
+                            UserName = "Stephen"
+                        };
+                        var result = await userManager.CreateAsync(stephen, "P@ssw0rd");
+                        await userManager.AddClaimAsync(stephen, new Claim("CanEdit", "true"));
+
+                        // add normal user
+                        var bob = new ApplicationUser
+                        {
+                            UserName = "Bob"
+                        };
+                        await userManager.CreateAsync(bob, "P@ssw0rd");
+                    }
+
+                }
+            }
+        }
+
+
         public static async Task InitializeMoviesDatabaseAsync(IServiceProvider serviceProvider, bool createUsers = true)
         {
             using (var db = serviceProvider.GetService<MoviesAppContext>())
             {
                 var sqlServerDatabase = db.Database as SqlServerDatabase;
                 if (sqlServerDatabase != null)
-                {
+                {   
                     if (await sqlServerDatabase.EnsureCreatedAsync())
                     {
                         await InsertTestData(serviceProvider);

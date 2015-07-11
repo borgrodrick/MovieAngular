@@ -40,13 +40,13 @@ namespace MovieAngular
 
         public void Configure(IApplicationBuilder app)
         {
-
-            // Add static files
             app.UseStaticFiles();
+
+            app.UseIdentity();
 
             app.UseMvc();
 
-            SampleData.InitializeMoviesDatabaseAsync(app.ApplicationServices).Wait();
+            SampleData.CreateSampleData(app.ApplicationServices).Wait();
         }
 
     }

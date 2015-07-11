@@ -4,7 +4,7 @@
     config.$inject = ['$routeProvider', '$locationProvider'];
 
     angular.module('moviesApp', [
-        'ngRoute', 'moviesServices'
+        'ngRoute', 'ui.bootstrap', 'moviesServices'
     ]).config(config);
 
     function config($routeProvider, $locationProvider) {
@@ -24,7 +24,8 @@
             .when('/movies/delete/:id', {
                 templateUrl: '/Views/delete.html',
                 controller: 'MoviesDeleteController'
-            });
+            })
+			.otherwise({ redirectTo: '/' });
 
         $locationProvider.html5Mode(true);
     }
