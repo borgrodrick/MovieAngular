@@ -43,7 +43,6 @@ namespace MovieAngular.API
 
 
         [HttpPost]
-        [Authorize]
         public IActionResult Post([FromBody]Movie movie)
         {
             if (ModelState.IsValid)
@@ -71,7 +70,6 @@ namespace MovieAngular.API
 
 
         [HttpDelete("{id:int}")]
-        [Authorize]
         public IActionResult Delete(int id)
         {
             var movie = _dbContext.Movies.FirstOrDefault(m => m.Id == id);
